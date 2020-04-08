@@ -3,4 +3,6 @@
 Redovisningstexter
 =========================
 
-Detta innehåll är skrivet i markdown och du hittar innehållet i filen `content/redovisning/00_index.md`.
+Här kan du läsa resdovisningstexter för varje kursmoment.
+
+[FIGURE src="image/psychedelic.png?w=100%"]

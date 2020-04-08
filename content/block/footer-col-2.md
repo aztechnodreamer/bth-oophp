@@ -1,3 +1,5 @@
-#### Footer col 2
+#### Sociala medier
 
-Med brödtext i ett stycke som säger något trevligt om just detta block, eller kanske en lista av länkar.
+Skapa viktiga kontakter och bygg ditt nätverk. Använd dbwebb’s sociala nätverk som en bas.
+
+Läs mer om [dbwebbs sociala mediekanaler »](https://dbwebb.se/social)
