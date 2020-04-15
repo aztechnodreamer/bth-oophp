@@ -49,6 +49,20 @@ return [
             "title" => "Dokumentation av ramverk och liknande.",
         ],
         [
+            "text" => "Spel",
+            "url" => "games",
+            "title" => "Spel",
+            "submenu" => [
+                "items" => [
+                    [
+                        "text" => "Gissa mitt nummer",
+                        "url" => "games/guess",
+                        "title" => "Gissa mitt nummer",
+                    ],
+                ],
+            ],
+        ],
+        [
             "text" => "Test &amp; Lek",
             "url" => "lek",
             "title" => "Testa och lek med test- och exempelprogram",

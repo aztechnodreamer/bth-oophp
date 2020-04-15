@@ -1,7 +1,7 @@
 #!/usr/bin/env make
 #
-# A Desinax theme.
-# See organisation on GitHub: https://github.com/desinax
+# An Anax module.
+# See organisation on GitHub: https://github.com/canax
 
 # ------------------------------------------------------------------------
 #
@@ -37,12 +37,10 @@ THIS_MAKEFILE := $(call WHERE-AM-I)
 HELPTEXT = $(call ACTION_MESSAGE, $(shell egrep "^\# target: $(1) " $(THIS_MAKEFILE) | sed "s/\# target: $(1)[ ]*-[ ]* / /g"))
 
 # Check version  and path to command and display on one line
-CHECK_VERSION = printf "%-15s %-10s %s\n" "$(shell basename $(1))" "`$(1) --version $(2)`" "`which $(1)`"
+CHECK_VERSION = printf "%-15s %-10s %s\n" "`basename $(1)`" "`$(1) --version $(2)`" "`which $(1)`"
 
 # Get current working directory, it may not exist as environment variable.
 PWD = $(shell pwd)
-
-
 
 # target: help                    - Displays help.
 .PHONY:  help
@@ -56,283 +54,426 @@ help:
 
 
 
-# target: tag-prepare             - Prepare to tag new version.
-.PHONY: tag-prepare
-tag-prepare:
-	@$(call HELPTEXT,$@)
-	grep "^v." REVISION.md | head -1
-	[ ! -f package.json ] || grep version package.json
-	git tag
-	git status
-	#gps && gps --tags
-	#npm publish
-
-
-
 # ------------------------------------------------------------------------
 #
 # Specifics for this project.
 #
+# Default values for arguments
+container ?= latest
 
-# Add local bin path for test tools
-LESSC   = node_modules/.bin/lessc
-ESLINT  = node_modules/.bin/eslint
-
-BUILD = build
-HTDOCS = htdocs
-SOURCE = src
-
-LESS_SOURCES = $(shell find $(SOURCE) -maxdepth 1 -name '*.less')
-LESS_CSS 	 = $(LESS_SOURCES:$(SOURCE)/%.less=$(BUILD)/less/css/%.css)
-LESS_MIN_CSS = $(LESS_SOURCES:$(SOURCE)/%.less=$(BUILD)/less/css/%.min.css)
-LESS_LINT 	 = $(LESS_SOURCES:$(SOURCE)/%.less=$(BUILD)/less/lint/%.less)
-LESS_MODULES = $(shell find $(SOURCE) -mindepth 2 -name '*.less')
-
-#SCSS_SOURCES := $(shell find $(SOURCEDIR) -name '*.scss')
-#SCSS_INCLUDE_PATH = $(SOURCEDIR)
-
-DESINAX_MODULES = $(shell cd $(SOURCE) && find @desinax -mindepth 1 -maxdepth 1 -type d)
+BIN     := .bin
+#PHPUNIT := $(BIN)/phpunit
+PHPUNIT := vendor/bin/phpunit
+PHPLOC 	:= $(BIN)/phploc
+PHPCS   := $(BIN)/phpcs
+PHPCBF  := $(BIN)/phpcbf
+PHPMD   := $(BIN)/phpmd
+PHPDOC  := $(BIN)/phpdoc
+BEHAT   := $(BIN)/behat
+SHELLCHECK := $(BIN)/shellcheck
+BATS := $(BIN)/bats
 
 
 
-# ------------------------------------------------------------------------
-#
-# Basic rules.
-#
-# target: prepare                 - Prepare the build directory.
-.PHONY: prepare
-prepare: 
+# target: prepare                 - Prepare for tests and build
+.PHONY:  prepare
+prepare:
 	@$(call HELPTEXT,$@)
-	@[ -d $(BUILD)/less/css ] || install -d $(BUILD)/less/css
-	@[ -d $(BUILD)/less/lint ] || install -d $(BUILD)/less/lint
+	[ -d .bin ] || mkdir .bin
+	[ -d build ] || mkdir build
+	rm -rf build/*
 
 
 
-# target: build                   - Build the stylesheets.
-.PHONY: build
-build: prepare less
-	@$(call HELPTEXT,$@)
-
-
-# target: clean                   - Clean from generated build files.
+# target: clean                   - Removes generated files and directories.
 .PHONY: clean
-clean: 
+clean:
 	@$(call HELPTEXT,$@)
-	rm -rf $(BUILD)
+	rm -rf build
 
 
 
-# target: clean-all               - Clean all installed utilities.
-.PHONY: clean-all
-clean-all: clean
+# target: clean-cache             - Clean the cache.
+.PHONY:  clean-cache
+clean-cache:
 	@$(call HELPTEXT,$@)
-	rm -rf node_modules
+	rm -rf cache/*/*
 
 
 
-# target: install                 - Install modules and dev environment.
-.PHONY: install
-install: npm-install
+# target: clean-all               - Removes generated files and directories.
+.PHONY:  clean-all
+clean-all: clean clean-cache
 	@$(call HELPTEXT,$@)
+	rm -rf .bin vendor composer.lock
 
 
 
-# target: check                   - Check versions of tools.
-.PHONY: check
-check:
-	@$(call HELPTEXT,$@)
-	@$(call CHECK_VERSION, $(LESSC))
-	@$(call CHECK_VERSION, $(ESLINT))
-	npm list --depth=0
-
-
-
-# target: update                  - Update codebase.
-.PHONY: update
-update: npm-update modules-install styleguide-update
+# target: check                   - Check version of installed tools.
+.PHONY:  check
+check: check-tools-bash check-tools-php check-docker
 	@$(call HELPTEXT,$@)
 
 
 
-# target: upgrade                 - Upgrade codebase.
-.PHONY: upgrade
-upgrade: npm-upgrade modules-install styleguide-update
+# target: test                    - Run all tests.
+.PHONY:  test
+test: phpunit phpcs phpmd phploc behat shellcheck bats
+	@$(call HELPTEXT,$@)
+	composer validate
+
+
+
+# target: doc                     - Generate documentation.
+.PHONY:  doc
+doc: phpdoc
 	@$(call HELPTEXT,$@)
 
 
 
-# target: test                    - Execute all tests.
-.PHONY: test
-test: less-lint
+# target: build                   - Do all build
+.PHONY:  build
+build: test doc #theme less-compile less-minify js-minify
 	@$(call HELPTEXT,$@)
+
+
+
+# target: install                 - Install all tools
+.PHONY:  install
+install: prepare install-tools-php install-tools-bash
+	@$(call HELPTEXT,$@)
+	composer install
+
+
+
+# target: install-lowest          - Install lowest version of deoendencies
+.PHONY:  install-lowest
+install-lowest:
+	@$(call HELPTEXT,$@)
+	composer update --no-dev --prefer-lowest
+
+
+
+# target: update                  - Update the codebase and tools.
+.PHONY:  update
+update:
+	@$(call HELPTEXT,$@)
+	[ ! -d .git ] || git pull
+	composer update
+
+
+
+# target: tag-prepare             - Prepare to tag new version.
+.PHONY: tag-prepare
+tag-prepare:
+	@$(call HELPTEXT,$@)
+
+
+
+# ----------------------------------------------------------------------------
+#
+# docker
+#
+# target: docker-up               - Start all docker container="", or specific, default "latest".
+.PHONY: docker-up
+docker-up:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml up -d $(container)
+
+
+
+# target: docker-stop             - Stop running docker containers.
+.PHONY: docker-stop
+docker-stop:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml stop
+
+
+
+# target: docker-run              - Run container="" with what="" one off command.
+.PHONY: docker-run
+docker-run:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml run $(container) $(what)
+
+
+
+# target: docker-bash             - Run container="" with what="bash" one off command.
+.PHONY: docker-bash
+docker-bash:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml run $(container) bash
+
+
+
+# target: docker-exec             - Run container="" with what="" command in running container.
+.PHONY: docker-exec
+docker-exec:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml exec $(container) $(what)
+
+
+
+# target: docker-install          - Run make install in container="".
+.PHONY: docker-install
+docker-install:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml run $(container) make install
+
+
+
+# target: docker-test             - Run make test in container="".
+.PHONY: docker-test
+docker-test:
+	@$(call HELPTEXT,$@)
+	[ ! -f docker-compose.yaml ] || docker-compose -f docker-compose.yaml run $(container) make test
+
+
+
+# target: check-docker            - Check versions of docker.
+.PHONY: check-docker
+check-docker:
+	@$(call HELPTEXT,$@)
+	@$(call CHECK_VERSION, docker, | cut -d" " -f3-)
+	@$(call CHECK_VERSION, docker-compose, | cut -d" " -f3-)
 
 
 
 # ------------------------------------------------------------------------
 #
-# External modules install/clean
+# PHP
 #
-# target: modules-desinax-install - Install Desinax modules into less/sass/js-dir.
-.PHONY: modules-desinax-install
-modules-desinax-install:
+
+# target: install-tools-php       - Install PHP development tools.
+.PHONY: install-tools-php
+install-tools-php:
 	@$(call HELPTEXT,$@)
-	@cd node_modules;                         \
-	for module in $(DESINAX_MODULES) ; do     \
-		$(call ACTION_MESSAGE, $$module);     \
-		[ ! -d $$module ]                     \
-			&& $(ECHO) "Module not installed, skipping it." \
-			&& continue;                      \
-		install -d ../src/$$module;           \
-		rsync -av $$module/src/ ../src/$$module/; \
-		rsync -a $$module/README.md ../src/$$module/; \
-		rsync -a $$module/REVISION.md ../src/$$module/; \
-		rsync -a $$module/LICENSE ../src/$$module/; \
-	done
+	#curl -Lso $(PHPDOC) https://www.phpdoc.org/phpDocumentor.phar && chmod 755 $(PHPDOC)
+	curl -Lso $(PHPDOC) https://github.com/phpDocumentor/phpDocumentor2/releases/download/v2.9.0/phpDocumentor.phar && chmod 755 $(PHPDOC)
+
+	curl -Lso $(PHPCS) https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod 755 $(PHPCS)
+
+	curl -Lso $(PHPCBF) https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar && chmod 755 $(PHPCBF)
+
+	curl -Lso $(PHPMD) https://github.com/phpmd/phpmd/releases/download/2.7.0/phpmd.phar && chmod 755 $(PHPMD)
+	# curl -Lso $(PHPMD) http://static.phpmd.org/php/latest/phpmd.phar && chmod 755 $(PHPMD)
+	# curl -Lso $(PHPMD) http://www.student.bth.se/~mosstud/download/phpmd.phar && chmod 755 $(PHPMD)
+
+	curl -Lso $(PHPLOC) https://phar.phpunit.de/phploc.phar && chmod 755 $(PHPLOC)
+
+	curl -Lso $(BEHAT) https://github.com/Behat/Behat/releases/download/v3.3.0/behat.phar && chmod 755 $(BEHAT)
+
+	# # Get PHPUNIT depending on current PHP installation
+	# curl -Lso $(PHPUNIT) https://phar.phpunit.de/phpunit-$(shell \
+	#  	php -r "echo version_compare(PHP_VERSION, '7.0', '<') \
+	# 		? '5' \
+	# 		: (version_compare(PHP_VERSION, '7.1', '>=') \
+	# 			? '7' \
+	# 			: '6'\
+	# 	);" \
+	# 	).phar && chmod 755 $(PHPUNIT)
+
+	[ ! -f composer.json ] || composer install
 
 
 
-# target: modules-desinax-clean   - Clean Desinax modules from src/.
-.PHONY: modules-desinax-clean
-modules-desinax-clean:
+# target: check-tools-php         - Check versions of PHP tools.
+.PHONY: check-tools-php
+check-tools-php:
 	@$(call HELPTEXT,$@)
-	for module in $(DESINAX_MODULES) ; do     \
-		$(call ACTION_MESSAGE, $$module);     \
-		rm -rf src/$$module/*; 		          \
-	done
+	php --version && echo
+	composer show && echo
+	@$(call CHECK_VERSION, $(PHPUNIT))
+	@$(call CHECK_VERSION, $(PHPLOC))
+	@$(call CHECK_VERSION, $(PHPCS))
+	@$(call CHECK_VERSION, $(PHPMD))
+	@$(call CHECK_VERSION, $(PHPCBF))
+	@$(call CHECK_VERSION, $(PHPDOC))
+	@$(call CHECK_VERSION, $(BEHAT))
 
 
 
-# target: modules-install         - Install external modules.
-.PHONY: modules-install
-modules-install: modules-desinax-install
+# target: phpunit                 - Run unit tests for PHP.
+.PHONY: phpunit
+phpunit: prepare
 	@$(call HELPTEXT,$@)
-
-	# Normalize.css
-	npm install normalize.css
-	rsync -av --exclude package.json node_modules/normalize.css src/
-	rsync -av src/normalize.css/normalize.css src/normalize.css/normalize.less
-
-	# Font Awesome
-	npm install @fortawesome/fontawesome-free
-	rsync -av --exclude package.json node_modules/@fortawesome/fontawesome-free src/@fortawesome/
+	[ ! -d "test" ] || $(PHPUNIT) --configuration .phpunit.xml $(options)
 
 
 
-# target: modules-clean           - Clean external modules.
-.PHONY: modules-clean
-modules-clean: modules-desinax-clean
+# target: phpcs                   - Codestyle for PHP.
+.PHONY: phpcs
+phpcs: prepare
 	@$(call HELPTEXT,$@)
+	[ ! -f .phpcs.xml ] || $(PHPCS) --standard=.phpcs.xml | tee build/phpcs
 
-	# Normalize.css
-	rm -rf src/normalize.css
 
-	# Font Awesome
-	rm -rf src/@fortawesome
+
+# target: phpcbf                  - Fix codestyle for PHP.
+.PHONY: phpcbf
+phpcbf:
+	@$(call HELPTEXT,$@)
+ifneq ($(wildcard test),)
+	[ ! -f .phpcs.xml ] || $(PHPCBF) --standard=.phpcs.xml
+else
+	[ ! -f .phpcs.xml ] || $(PHPCBF) --standard=.phpcs.xml src
+endif
+
+
+
+# target: phpmd                   - Mess detector for PHP.
+.PHONY: phpmd
+phpmd: prepare
+	@$(call HELPTEXT,$@)
+	- [ ! -f .phpmd.xml ] || [ ! -d src ] || $(PHPMD) . text .phpmd.xml | tee build/phpmd
+
+
+
+# target: phploc                  - Code statistics for PHP.
+.PHONY: phploc
+phploc: prepare
+	@$(call HELPTEXT,$@)
+	[ ! -d src ] || $(PHPLOC) src > build/phploc
+
+
+
+# target: phpdoc                  - Create documentation for PHP.
+.PHONY: phpdoc
+phpdoc:
+	@$(call HELPTEXT,$@)
+	[ ! -d doc ] || $(PHPDOC) --config=.phpdoc.xml
+
+
+
+# target: behat                   - Run behat for feature tests.
+.PHONY: behat
+behat:
+	@$(call HELPTEXT,$@)
+	[ ! -d features ] || $(BEHAT)
+
+
+# ------------------------------------------------------------------------
+#
+# Bash
+#
+
+# target: install-tools-bash      - Install Bash development tools.
+.PHONY: install-tools-bash
+install-tools-bash:
+	@$(call HELPTEXT,$@)
+	# Shellcheck
+	curl -s https://storage.googleapis.com/shellcheck/shellcheck-latest.linux.x86_64.tar.xz | tar -xJ -C build/ && rm -f .bin/shellcheck && ln build/shellcheck-latest/shellcheck .bin/
+
+	# Bats
+	curl -Lso $(BIN)/bats-exec-suite https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-suite
+	curl -Lso $(BIN)/bats-exec-test https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-exec-test
+	curl -Lso $(BIN)/bats-format-tap-stream https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-format-tap-stream
+	curl -Lso $(BIN)/bats-preprocess https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats-preprocess
+	curl -Lso $(BATS) https://raw.githubusercontent.com/sstephenson/bats/master/libexec/bats
+	chmod 755 $(BIN)/bats*
+
+
+
+# target: check-tools-bash        - Check versions of Bash tools.
+.PHONY: check-tools-bash
+check-tools-bash:
+	@$(call HELPTEXT,$@)
+	@$(call CHECK_VERSION, $(SHELLCHECK))
+	@$(call CHECK_VERSION, $(BATS))
+
+
+
+# target: shellcheck              - Run shellcheck for bash files.
+.PHONY: shellcheck
+shellcheck:
+	@$(call HELPTEXT,$@)
+	[ ! -f src/*.bash ] || $(SHELLCHECK) --shell=bash src/*.bash
+
+
+
+# target: bats                    - Run bats for unit testing bash files.
+.PHONY: bats
+bats:
+	@$(call HELPTEXT,$@)
+	[ ! -d bats ] || $(BATS) bats/
 
 
 
 # ------------------------------------------------------------------------
 #
-# Validation according to CSS-styleguide.
-# @TODO Clean up this rule, is it active?
+# Developer
 #
-# target: styleguide-update       - Update styleguide validation files.
-.PHONY: styleguide-update
-styleguide-update:
+# target: scaff-reinstall         - Reinstall using scaffolding processing scripts.
+.PHONY: scaff-reinstall
+scaff-reinstall:
 	@$(call HELPTEXT,$@)
-	rsync -av node_modules/@desinax/css-styleguide/.stylelintrc.json .
-
+	#rm -rf -v !(composer.*|vendor|.anax); .anax/scaffold/postprocess.bash
 
 
 
 # ------------------------------------------------------------------------
 #
-# LESS.
+# Theme
 #
-# target: less                    - Compile the LESS stylesheet(s).
-less: prepare less-css less-min-css
+# target: theme                   - Do make build install in theme/ if available.
+.PHONY: theme
+theme:
 	@$(call HELPTEXT,$@)
-	@rsync -a $(BUILD)/less/css htdocs/
-
-less-css: $(LESS_CSS)
-less-min-css: $(LESS_MIN_CSS)
-less-lint: $(LESS_LINT)
-
-$(BUILD)/less/css/%.css: $(SOURCE)/%.less
-	@$(call ACTION_MESSAGE,$< -> $@)
-	$(LESSC) $< $@
-
-$(BUILD)/less/css/%.min.css: $(SOURCE)/%.less
-	@$(call ACTION_MESSAGE,$< -> $@)
-	$(LESSC) --clean-css $< $@
-
-$(BUILD)/less/lint/%.less: $(SOURCE)/%.less
-	@$(call ACTION_MESSAGE,$< -> $@)
-	$(LESSC) --lint $< $@
-
-$(LESS_SOURCES): $(LESS_MODULES)
-	touch $@
+	[ ! -d theme ] || $(MAKE) --directory=theme build
+	rsync -a theme/build/less/css htdocs/
 
 
 
-# ------------------------------------------------------------------------
-#
-# SCSS.
-#
-
-
-
-# ------------------------------------------------------------------------
-#
-# CSS.
-#
-# target: lint-css                - Lint the CSS stylesheet(s).
-.PHONY: lint-css
-lint-css: less
-	@$(call HELPTEXT,$@)
-	$(LESSC) --include-path=$(LESS_INCLUDE_PATH) --lint $(LESS_SOURCE) > build/lint/style.less
-	- $(ESLINT) build/css/style.css > build/lint/style.css
-	ls -l build/lint/
-
-
-
-# ------------------------------------------------------------------------
-#
-# JS.
-#
-
-
-
-# ------------------------------------------------------------------------
-#
-# NPM.
-#
-# target: npm-install             - Install npm from package.json.
-.PHONY: npm-install
-npm-install: 
-	@$(call HELPTEXT,$@)
-	npm install
-
-
-
-# target: npm-update              - Update npm using package.json.
-.PHONY: npm-update
-npm-update: 
-	@$(call HELPTEXT,$@)
-	npm update
-
-
-
-# target: npm-upgrade             - Upgrade npm using package.json.
-.PHONY: npm-upgrade
-npm-upgrade: 
-	@$(call HELPTEXT,$@)
-	npm upgrade
-
-
-
-# target: npm-outdated            - Check for outdated packages.
-.PHONY: npm-outdated
-npm-outdated: 
-	@$(call HELPTEXT,$@)
-	npm outdated --depth=0
+# # ------------------------------------------------------------------------
+# #
+# # Cimage
+# #
+# 
+# define CIMAGE_CONFIG
+# <?php
+# return [
+#     "mode"         => "development",
+#     "image_path"   =>  __DIR__ . "/../img/",
+#     "cache_path"   =>  __DIR__ . "/../../cache/cimage/",
+#     "autoloader"   =>  __DIR__ . "/../../vendor/autoload.php",
+# ];
+# endef
+# export CIMAGE_CONFIG
+# 
+# define GIT_IGNORE_FILES
+# # Ignore everything in this directory
+# *
+# # Except this file
+# !.gitignore
+# endef
+# export GIT_IGNORE_FILES
+# 
+# # target: cimage-install          - Install Cimage in htdocs
+# .PHONY: cimage-install
+# cimage-install:
+# 	@$(call HELPTEXT,$@)
+# 	install -d htdocs/img htdocs/cimage cache/cimage
+# 	chmod 777 cache/cimage
+# 	$(ECHO) "$$GIT_IGNORE_FILES" | bash -c 'cat > cache/cimage/.gitignore'
+# 	cp vendor/mos/cimage/webroot/img.php htdocs/cimage
+# 	cp vendor/mos/cimage/webroot/img/car.png htdocs/img/
+# 	touch htdocs/cimage/img_config.php
+# 
+# # target: cimage-update           - Update Cimage to latest version.
+# .PHONY: cimage-update
+# cimage-update:
+# 	@$(call HELPTEXT,$@)
+# 	composer require mos/cimage
+# 	install -d htdocs/img htdocs/cimage cache/cimage
+# 	chmod 777 cache/cimage
+# 	$(ECHO) "$$GIT_IGNORE_FILES" | bash -c 'cat > cache/cimage/.gitignore'
+# 	cp vendor/mos/cimage/webroot/img.php htdocs/cimage
+# 	cp vendor/mos/cimage/webroot/img/car.png htdocs/img/
+# 	touch htdocs/cimage/img_config.php
+# 
+# # target: cimage-config-create    - Create configfile for Cimage.
+# .PHONY: cimage-config-create
+# cimage-config-create:
+# 	@$(call HELPTEXT,$@)
+# 	$(ECHO) "$$CIMAGE_CONFIG" | bash -c 'cat > htdocs/cimage/img_config.php'
+# 	cat htdocs/cimage/img_config.php
