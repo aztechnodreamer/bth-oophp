@@ -1,9 +1,13 @@
 Revision history
 ======================
 
+v2.0.2 (2020-04-19)
+-------------------
+* Uppdated files: `src/Guess/GuessException.php` and `revision.md`.
+
 v2.0.1 (2020-04-15)
 -------------------
-* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php`, `revision.md`
+* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php` and `revision.md`.
 
 
 v2.0.0 (2020-04-15)
