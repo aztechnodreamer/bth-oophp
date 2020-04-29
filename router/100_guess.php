@@ -71,6 +71,6 @@ $app->router->get("guess/init", function () use ($app) {
     } elseif ($doCheat) {
          $_SESSION["doCheat"] = $doCheat;
     }
-    
+
      return $app->response->redirect("guess/play");
  });

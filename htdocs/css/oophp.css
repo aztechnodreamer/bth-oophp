@@ -5897,3 +5897,67 @@ h1 {
 .region-flash img {
   box-shadow: 0px 0px 15px #333;
 }
+
+.roll {
+    min-height: 50px;
+    text-align: center;
+}
+
+.roll,
+.protocol {
+    overflow: auto;
+}
+
+.player {
+    width: 20%;
+    padding: 0.6%;
+    margin-left: 1.7%;
+    margin-right: 1.7%;
+    float: left;
+    border: 1px solid #fff;
+}
+
+.currPlayer {
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: rgba(204, 255, 204, 0.8);
+}
+
+/**
+ * Style a dice using UTF-8 characters.
+ */
+.dice-utf8 .dice-1::after { content: "\2680"; color: red; }
+.dice-utf8 .dice-2::after { content: "\2681"; }
+.dice-utf8 .dice-3::after { content: "\2682"; }
+.dice-utf8 .dice-4::after { content: "\2683"; }
+.dice-utf8 .dice-5::after { content: "\2684"; }
+.dice-utf8 .dice-6::after { content: "\2685"; }
+
+.dice-utf8 {
+    display: inline-block;
+    margin: 0;
+    margin-top: 20px;
+    font-size: 64px;
+}
+
+input[type="submit"]:disabled {
+    color: #c0c0c0;
+    padding: 2px 7px;
+    border: 1px solid #c0c0c0;
+}
+
+.rules {
+    float:right;
+    background-color: #f5daee;
+    border: 1px solid #f5daee;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 0;
+    margin-left: 22px;
+}
+
+.winner {
+    font-size: 2em; /*1.875em;*/
+    font-weight: bold;
+    color: blue;
+}
