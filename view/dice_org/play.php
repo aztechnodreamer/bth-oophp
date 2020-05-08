@@ -10,35 +10,19 @@ namespace Anax\View;
 //echo showEnvironment(get_defined_vars(), get_defined_functions());
 
 ?><h1>Dice 100</h1>
-<?php if (!$gameInit) : ?>
-    <p style="text-align: center;">Play a game of dice.</p>
-
-    <div class="gamestart">
-        <form method="post">
-            <fieldset>
-                <legend>Player vs Player</legend>
-                <label>Number of dices: </label>
-                <input type="number" name="dices" value="3" min="1"><br />
-                <label>Number of players: </label>
-                <input type="number" name="players" value="2" min="2"><br />
-                <input type="submit" name="doInit" value="Start game">
-            </fieldset>
-        </form>
-        <form style="margin-left: 10%;" method="post">
-            <fieldset>
-                <legend>Player vs Computer</legend>
-                <label>Number of dices: </label>
-                <input type="number" name="dices" value="3" min="1"><br />
-                <label>Number of players: </label>
-                <input type="number" name="players" value="1" disabled><br />
-                <input type="submit" name="doComputer" value="Start game">
-            </fieldset>
-        </form>
-    </div>
+<?php if (!isset($_SESSION["game"])) : ?>
+    <p>Play a game of dice.</p>
+    <form method="post">
+        <label>Number of dices: </label>
+        <input type="number" name="dices" value="3" min="1">
+        <label>Number of players: </label>
+        <input type="number" name="players" value="2" min="2">
+        <input type="submit" name="doInit" value="Start game">
+    </form>
 
     <h3 style="text-align: center;">Rules</h3>
-    <p class="rules"><b>Number of dice:</b> one or more.<br />
-    <b>Number of players:</b> 1 player vs computer or 2+ players vs each other.<br /><br />
+    <p class="rules"><b>Number of players:</b> two or more.<br />
+    <b>Number of dice:</b> one or more.<br /><br />
     <b>Goal:</b> First to get 100 points wins.</p>
 
     <p>A round begins by a player throwing all the dices. Dices with 2-6 pips are
@@ -55,7 +39,7 @@ namespace Anax\View;
 
 <?php endif; ?>
 
-<?php if ($gameInit) : ?>
+<?php if (isset($_SESSION["game"])) : ?>
     <div class="roll">
     <?php if ($status != "win") : ?>
         <p><b>Dices/turn:</b> <?= $dices ?> |
@@ -108,6 +92,4 @@ namespace Anax\View;
         echo "</div>";
     }
     echo "</div>";
-
-    echo "<h3 style='text-align: center;'>Display a histogram</h3><pre>" . $histogram . "</pre>";
 endif; ?>

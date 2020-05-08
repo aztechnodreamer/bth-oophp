@@ -5898,11 +5898,22 @@ h1 {
   box-shadow: 0px 0px 15px #333;
 }
 
+.gamestart form {
+    float: left;
+    text-align: right;
+}
+
+.gamestart label,
+.gamestart input[type="number"] {
+    width: 50px;
+}
+
 .roll {
     min-height: 50px;
     text-align: center;
 }
 
+.gamestart,
 .roll,
 .protocol {
     overflow: auto;
@@ -5947,6 +5958,7 @@ input[type="submit"]:disabled {
 }
 
 .rules {
+    width: 30%;
     float:right;
     background-color: #f5daee;
     border: 1px solid #f5daee;

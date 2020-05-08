@@ -1,20 +1,27 @@
 Revision history
 ======================
 
+v4.0.0 (2020-05-08)
+-------------------
+* New files added: `config/router/100_dice.php`, `src/Dice/DiceController.php`, `src/Dice/DiceHistogram.php`, `src/Dice/Histogram.php`, `src/Dice/HistogramInterface.php`, `src/Dice/HistogramTrait.php`, `test/Dice/DiceControllerCreateObjectTest.php`, `test/Dice/DiceHistorgramCreateObjectTest.php`, `test/Dice/HistorgramCreateObjectTest.php`, `view/dice_org/debug.php` and `view/dice_org/play.php`.
+* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php`, `src/Dice/DiceGame.php`, `test/Dice/DiceGameCreateObjectTest.php`, `view/dice/play.php`, `content/redovisning/04_kmom04.md` and `REVISION.md`.
+* Deleted files: `router/101_dice.php`.
+* Stylesheet updated: `htdocs/css/oophp.css`.
+
 v3.0.0 (2020-04-29)
 -------------------
 * New files added: `router/101_dice.php`, `src/Dice/Dice.php`, `src/Dice/DiceGame.php`, `src/Dice/DiceHand.php`, `test/Dice/DiceCreateObjectTest.php`, `test/Dice/DiceGameCreateObjectTest.php`, `test/Dice/DiceHandCreateObjectTest.php`, `view/dice/debug.php` and `view/dice/play.php`.
-* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php`, `content/games/02_dice.md`, `content/redovisning/03_kmom03.md` and `revision.md`.
+* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php`, `content/games/02_dice.md`, `content/redovisning/03_kmom03.md` and `REVISION.md`.
 * Renamed files: `router/100_games.php -> router/100_guess.php`.
 * Stylesheet updated: `htdocs/css/oophp.css`.
 
 v2.0.2 (2020-04-19)
 -------------------
-* Uppdated files: `src/Guess/GuessException.php` and `revision.md`.
+* Uppdated files: `src/Guess/GuessException.php` and `REVISION.md`.
 
 v2.0.1 (2020-04-15)
 -------------------
-* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php` and `revision.md`.
+* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php` and `REVISION.md`.
 
 
 v2.0.0 (2020-04-15)
@@ -26,7 +33,7 @@ v2.0.0 (2020-04-15)
 v1.0.1 (2020-04-08)
 -------------------
 
-* New files added: `revision.md`, `license.txt`, `readme.md` and `oophp.css`.
+* New files added: `REVISION.md`, `license.txt`, `readme.md` and `oophp.css`.
 * Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php`, `config/page.php`, `content/.meta.md`, `content/block/footer-col-1.md`, `content/block/footer-col-2.md`, `content/block/footer-col-3.md`, `content/block/footer.md`, `content/block/om-kursrepo.md`, `content/block/om-redovisa.md`, `content/dokumentation/.meta.md`, `content/index.md`, `content/lek/.meta.md`, `content/om.md`, `content/redovisning/.meta.md`, `content/redovisning/00_index.md`, `content/redovisning/01_kmom01.md` and `github.txt`.
 * Images deleted: `htdocs/img/car.png`, `htdocs/img/eld.jpg`.
 * Images added: `htdocs/img/lighting.jpg`, `htdocs/img/psy.jpg`, `htdocs/img/psychedelic.png`, `htdocs/img/theme/hunting.jpg`.

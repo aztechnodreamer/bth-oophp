@@ -46,19 +46,37 @@ class DiceGameCreateObjectTest extends TestCase
 
 
     /**
-     * Construct object, set first player then get current player.
+     * Construct object and verify that the object has the expected
+     * properties. Use both argument.
      */
-    public function testCreateObjectSetFirstPlayerAndGetCurrentPlayer()
+    public function testCreateObjectArgumentsComputer()
     {
-        $diceGame = new DiceGame();
+        $diceGame = new DiceGame(5, 1);
+        $this->assertInstanceOf("\Seva19\Dice\DiceGame", $diceGame);
 
-        $res = $diceGame->currPlayer();
-        $this->assertNull($res);
+        $arr = $diceGame->protocol();       //test protocol()
 
-        $diceGame->setFirstPlayer();
-        $res = $diceGame->currPlayer();
-        $this->assertIsString($res);
+        $res = count($arr);
+        $exp = 2;
+        $this->assertEquals($exp, $res);
     }
+
+
+
+    // /**
+    //  * Construct object, set first player then get current player.
+    //  */
+    // public function testCreateObjectSetFirstPlayerAndGetCurrentPlayer()
+    // {
+    //     $diceGame = new DiceGame();
+    //
+    //     $res = $diceGame->currPlayer();
+    //     $this->assertNull($res);
+    //
+    //     $diceGame->setFirstPlayer();
+    //     $res = $diceGame->currPlayer();
+    //     $this->assertIsString($res);
+    // }
 
 
 
@@ -124,6 +142,21 @@ class DiceGameCreateObjectTest extends TestCase
         //Check that sum = 0
         $res = $diceGame->sum();
         $this->assertEquals(0, $res);
+    }
+
+
+
+    /**
+     * Construct object and get histogram.
+     */
+    public function testCreateObjectGetHistogram()
+    {
+        $diceGame = new DiceGame();
+
+        $res = $diceGame->getHistogram();
+        $exp = "1: <br />2: <br />3: <br />4: <br />5: <br />6: <br />";
+
+        $this->assertEquals($exp, $res);
     }
 
 
