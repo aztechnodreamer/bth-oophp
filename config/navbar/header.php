@@ -49,6 +49,11 @@ return [
             ],
         ],
         [
+            "text" => "Textfilter",
+            "url" => "mytextfilter",
+            "title" => "Textfilter",
+        ],
+        [
             "text" => "Om",
             "url" => "om",
             "title" => "Om denna webbplats.",

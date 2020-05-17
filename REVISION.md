@@ -1,6 +1,11 @@
 Revision history
 ======================
 
+v6.0.1 (2020-05-17)
+-------------------
+* New files added: `config/router/300_mytextfilter.php`, `src/MyTextFilter/MyTextFilter.php`, `src/MyTextFilter/MyTextFilterController.php` and `view/mytextfilter/index.php`.
+* Uppdated files: `config/navbar/header.php`, `config/navbar/responsive.php`, `composer.json` and `REVISION.md`.
+
 v5.0.0 (2020-05-14)
 -------------------
 * New files added: `config/router/200_movie.php`, `htdocs/php-pdo-mysql/index.php`, `htdocs/php-pdo-mysql/sql/collation.sql`, `htdocs/php-pdo-mysql/sql/setup-db.sql`, `htdocs/php-pdo-mysql/sql/setup.sql`, `htdocs/php-pdo-mysql/src/Database.php`, `htdocs/php-pdo-mysql/src/autoload.php`, `htdocs/php-pdo-mysql/src/config.php`, `htdocs/php-pdo-mysql/src/function.php`, `htdocs/php-pdo-mysql/view/footer.php`, `htdocs/php-pdo-mysql/view/header.php`, `htdocs/php-pdo-mysql/view/movie-edit.php`, `htdocs/php-pdo-mysql/view/movie-select.php`, `htdocs/php-pdo-mysql/view/reset.php`, `htdocs/php-pdo-mysql/view/search-title.php`, `htdocs/php-pdo-mysql/view/search-year.php`, ` htdocs/php-pdo-mysql/view/select.php`, `htdocs/php-pdo-mysql/view/show-all-paginate.php`, `htdocs/php-pdo-mysql/view/show-all-sort.php`, `htdocs/php-pdo-mysql/view/show-all.php`, `src/Controller/MovieController.php`, `view/movie/create.php`, `view/movie/edit.php` and `view/movie/index.php`.
