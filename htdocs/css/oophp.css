@@ -6006,3 +6006,61 @@ input[type="submit"]:disabled {
 .movieEdit input[type="number"] {
     width: 300px;
 }
+
+.blog-left,
+.blog-right {
+    width: 45%;
+    border: none;
+    float: left;
+}
+
+.blog-left {
+    width: 60%;
+    height: 100%;
+}
+
+.blog-right {
+    width: 30%;
+    height: 100%;
+}
+
+.blog-left input[type="text"],
+.blog-right input[type="text"],
+.blog-right select {
+    width: 100%;
+}
+
+.blog-left textarea {
+    width: 100%;
+    height: 15em;
+}
+
+.blog-right .checkbox {
+    margin-right: 10px;
+}
+
+.blog-submit {
+    width: 90%;
+    text-align: center;
+    border: none;
+}
+
+table.admin,
+table.pages {
+    border: 1px solid #f5f5f5;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.admin tr:nth-child(even),
+.pages tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.admin tr td:last-child {
+    background-color: #fff;
+}
+
+.admin td {
+    padding: 1px 5px;
+}

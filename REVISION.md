@@ -1,6 +1,12 @@
 Revision history
 ======================
 
+v6.0.2 (2020-05-21)
+-------------------
+* New files added: `config/router/350_blog.php`, `sql/content/setup.sql`, `src/Blog/BlogController.php`, `src/Blog/function.php`, `view/blog/404.php`, `view/blog/admin.php`, `view/blog/blogpages.php`, `view/blog/blogposts.php`, `view/blog/create.php`, `view/blog/deleted.php`, `view/blog/edit.php`, `view/blog/page.php` and `view/blog/post.php`.
+* Uppdated files: `src/MyTextFilter/MyTextFilter.php`, `config/navbar/header.php`, `config/navbar/responsive.php`, `content/redovisning/06_kmom06.md` and `REVISION.md`.
+* Stylesheet updated: `htdocs/css/oophp.css`.
+
 v6.0.1 (2020-05-17)
 -------------------
 * New files added: `config/router/300_mytextfilter.php`, `src/MyTextFilter/MyTextFilter.php`, `src/MyTextFilter/MyTextFilterController.php` and `view/mytextfilter/index.php`.

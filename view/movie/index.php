@@ -56,4 +56,4 @@ if (!$resultset) {
 <?php endforeach; ?>
 </table>
 
-<a href="movie/create"><button style="margin: 20px 0;">Lägg till film</button>
+<a href="movie/create"><button style="margin: 20px 0;">Lägg till film</button></a>

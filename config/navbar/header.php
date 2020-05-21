@@ -45,6 +45,30 @@ return [
                         "url" => "redovisning/kmom05",
                         "title" => "Redovisning för kmom05.",
                     ],
+                    [
+                        "text" => "Kmom06",
+                        "url" => "redovisning/kmom06",
+                        "title" => "Redovisning för kmom06.",
+                    ],
+                ],
+            ],
+        ],
+        [
+            "text" => "Blogg",
+            "url" => "blog",
+            "title" => "Blogg",
+            "submenu" => [
+                "items" => [
+                    [
+                        "text" => "Sidor",
+                        "url" => "blog/pages",
+                        "title" => "Sidor",
+                    ],
+                    [
+                        "text" => "Admin",
+                        "url" => "blog/admin",
+                        "title" => "Admin",
+                    ],
                 ],
             ],
         ],
@@ -52,21 +76,6 @@ return [
             "text" => "Textfilter",
             "url" => "mytextfilter",
             "title" => "Textfilter",
-        ],
-        [
-            "text" => "Om",
-            "url" => "om",
-            "title" => "Om denna webbplats.",
-        ],
-        [
-            "text" => "Styleväljare",
-            "url" => "style",
-            "title" => "Välj stylesheet.",
-        ],
-        [
-            "text" => "Docs",
-            "url" => "dokumentation",
-            "title" => "Dokumentation av ramverk och liknande.",
         ],
         [
             "text" => "Spel",
@@ -91,6 +100,21 @@ return [
             "text" => "Filmer",
             "url" => "movie",
             "title" => "Filmdatabas",
+        ],
+        [
+            "text" => "Om",
+            "url" => "om",
+            "title" => "Om denna webbplats.",
+        ],
+        [
+            "text" => "Styleväljare",
+            "url" => "style",
+            "title" => "Välj stylesheet.",
+        ],
+        [
+            "text" => "Docs",
+            "url" => "dokumentation",
+            "title" => "Dokumentation av ramverk och liknande.",
         ],
         [
             "text" => "Test &amp; Lek",
